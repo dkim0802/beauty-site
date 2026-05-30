@@ -1,0 +1,27 @@
+.container-catalog {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.cards {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    margin-bottom: 70px;
+}
+
+.logo-catalog {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 30px 0px;
+    text-align: center;
+    color: #FF7CA3;
+}
+
+.btn-show-more {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}

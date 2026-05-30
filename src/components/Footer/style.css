@@ -1,0 +1,44 @@
+footer {
+    background-color: #FFF7F9;
+    padding: 60px 40px;
+}
+.container-footer {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.container-footer h1 {
+    font-size: 28px;
+    margin-bottom: 40px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.footer-content span {
+    color: #FF7CA3;
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.left-footer p, .right-footer p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.left-footer a:hover {
+    color: #b2516e;
+}
+
+.right-footer a:hover {
+    color: #b2516e;
+}
+.f-p {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 14px;
+    color: #555;
+}
