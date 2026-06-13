@@ -6,11 +6,12 @@ import {
     decreaseQty,
     removeFromCart,
     clearCart,
+    type CartItem,
 } from "../../utils/cart";
 import "./style.css";
 
 const BasketPage: React.FC = () => {
-    const [cart, setCart] = useState(getCart());
+    const [cart, setCart] = useState<CartItem[]>(getCart());
 
     const update = () => setCart(getCart());
 
@@ -21,7 +22,7 @@ const BasketPage: React.FC = () => {
     }, []);
 
     const totalPrice = cart.reduce(
-        (sum: number, item: any) =>
+        (sum, item) =>
             sum + item.price * item.quantity,
         0
     );
@@ -38,7 +39,7 @@ const BasketPage: React.FC = () => {
                     )}
 
                     <div className="basket-list">
-                        {cart.map((item: any) => (
+                        {cart.map((item) => (
                             <div key={item.id} className="basket-item">
                                 <img src={item.image} className="basket-img" alt={item.title} />
 

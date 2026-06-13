@@ -25,3 +25,13 @@
     justify-content: center;
     margin-bottom: 30px;
 }
+
+.catalog-status {
+    margin: 0 0 70px;
+    text-align: center;
+    color: #4b4b4b;
+}
+
+.catalog-status-error {
+    color: #c62828;
+}
