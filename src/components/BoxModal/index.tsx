@@ -11,12 +11,12 @@ interface BoxModalProps {
     onAddToBasket: () => void;
 }
 
-const BoxModal: React.FC<BoxModalProps> = ({title, description, price, image, onClose, onAddToBasket}) => {
+const BoxModal: React.FC<BoxModalProps> = ({title, description, price, onClose, onAddToBasket}) => {
     return (
         <div className="box-modal-overlay" onClick={onClose}>
             <div className="box-modal" onClick={(e) => e.stopPropagation()}>
                 <button className="close-button" onClick={onClose}>×</button>
-                {image && <img src={image} alt={title} className="box-modal-image" />}
+                <img src="https://res.cloudinary.com/dt0ceydok/image/upload/v1781611882/aaa_wtbx2g.webp" alt="" className="box-modal-image" />
                 <h2 className="box-modal-title">{title}</h2>
                 <p className="box-modal-description">{description}</p>
                 <p className="box-modal-price">{price} ₸</p>

@@ -1,26 +1,27 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import hero from "../../assets/header-photo.png";
 import Button from "../Button";
 import { Link, useNavigate } from "react-router";
 import { paths } from "../../router/routes";
 import BoxModal from "../BoxModal";
 import "./style.css";
+import { addToCart } from "../../utils/cart";
 
 const Header: React.FC = () => {
 
+    const navigate = useNavigate();
     const [isBoxModalOpen, setIsBoxModalOpen] = useState(false);
 
     const handleBoxesClick = () => {
         if (window.location.pathname === "/") {
-            document.getElementById("boxes")?.scrollIntoView({behavior: "smooth",});
+            document.getElementById("boxes")?.scrollIntoView({ behavior: "smooth", });
             return;
         }
         navigate("/");
         setTimeout(() => {
-            document.getElementById("boxes")?.scrollIntoView({behavior: "smooth",});
+            document.getElementById("boxes")?.scrollIntoView({ behavior: "smooth", });
         }, 150);
     };
-    const navigate = useNavigate();
 
 
     return (
@@ -32,7 +33,7 @@ const Header: React.FC = () => {
                     <Link to={paths.HOME.path}>Главная</Link>
                     <Link to={paths.CATALOG.path}>Каталог</Link>
                     <a className="nav-button" onClick={handleBoxesClick}>Боксы</a>
-                    <Link to={paths.BASKET.path}>Корзина</Link>
+                    <Link to={paths.BASKET.path} className="nav-cart">  Корзина </Link>
                 </nav>
 
                 <div className="hamburger">
@@ -48,24 +49,28 @@ const Header: React.FC = () => {
                     <p>Красота теперь ближе, чем вы думаете — один клик и бокс уже в пути к вам.</p>
 
                     <Button
-                        text="Заказать бокс"
-                           onClick={() => setIsBoxModalOpen(true)}
+                        text="Заказать эксклюзивный бокс"
+                        onClick={() => setIsBoxModalOpen(true)}
                     />
                 </div>
 
                 <div className="right">
-                    <img src={hero}alt="Header"/>
+                    <img src={hero} alt="Header" />
                 </div>
             </div>
 
-             {isBoxModalOpen && (
+            {isBoxModalOpen && (
                 <BoxModal
+                    image="https://res.cloudinary.com/dt0ceydok/image/upload/v1781611882/aaa_wtbx2g.webp"
                     title="Pink Petal Glow"
                     description="Твой идеальный ритуал любви к себе в одной коробочке. Мы собрали деликатные средства, которые подарят коже естественное сияние и свежесть весеннего сада."
                     price={14000}
                     onClose={() => setIsBoxModalOpen(false)}
                     onAddToBasket={() => {
-                        console.log("Добавлено в корзину");
+                        addToCart({
+                            title: "Pink Petal Glow",
+                            price: 14000,
+                        });
                         setIsBoxModalOpen(false);
                     }}
                 />

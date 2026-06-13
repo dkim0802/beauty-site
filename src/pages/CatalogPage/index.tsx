@@ -33,7 +33,9 @@ const Catalog: React.FC = () => {
                                     title: item.title,
                                     price: item.price,
                                 })
+                                
                             }
+                            
                         />
                         ))}
                     </div>
