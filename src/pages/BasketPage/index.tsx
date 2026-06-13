@@ -27,8 +27,9 @@ const BasketPage: React.FC = () => {
     );
 
     return (
-        <div className="basket-page">
-            <Layout>
+        <Layout>
+
+            <div className="basket-page">
                 <div className="basket-container">
                     <h1 className="basket-title">Корзина</h1>
 
@@ -39,7 +40,7 @@ const BasketPage: React.FC = () => {
                     <div className="basket-list">
                         {cart.map((item: any) => (
                             <div key={item.id} className="basket-item">
-                                <img src={item.image} className="basket-img" alt={item.title}/>
+                                <img src={item.image} className="basket-img" alt={item.title} />
 
                                 <div className="basket-info">
                                     <h3 className="basket-name">
@@ -57,7 +58,7 @@ const BasketPage: React.FC = () => {
                                     <button onClick={() => increaseQty(item.id)}> + </button>
                                 </div>
 
-                                <button  className="basket-delete" onClick={() => removeFromCart(item.id)}> Удалить </button>
+                                <button className="basket-delete" onClick={() => removeFromCart(item.id)}> Удалить </button>
                             </div>
                         ))}
                     </div>
@@ -77,8 +78,8 @@ const BasketPage: React.FC = () => {
                         </button>
                     </div>
                 </div>
-            </Layout>
-        </div>
+            </div>
+        </Layout>
     );
 };
 
