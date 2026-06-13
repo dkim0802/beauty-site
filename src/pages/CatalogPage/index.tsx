@@ -1,16 +1,20 @@
 import React from "react";
 import Card from "../../components/Card";
-import { products } from "../../data/ProductCard"
+import { products } from "../../data/ProductCard";
 import Button from "../../components/Button";
 import Layout from "../../layout";
+import { useNavigate } from "react-router";
+import { addToCart } from "../../utils/cart";
 import "./style.css";
 
 const Catalog: React.FC = () => {
+    const navigate = useNavigate();
+
     const allProducts = Array(4).fill(products).flat();
 
     return (
         <Layout>
-            <div className="сatalog">
+            <div className="catalog">
                 <div className="container-catalog">
 
                     <h1 className="logo-catalog">Каталог</h1>
@@ -18,17 +22,29 @@ const Catalog: React.FC = () => {
                     <div className="cards">
                         {allProducts.map((item, index) => (
                             <Card
-                                key={`${item.id}-${index}`}
-                                image={item.image}
-                                title={item.title}
-                                price={`${item.price} ₸`}
-                                onButtonClick={() => console.log("Добавлено в корзину:", item)}                             
-                            />
+                            key={`${item.id}-${index}`}
+                            image={item.image}
+                            title={item.title}
+                            price={`${item.price} ₸`}
+                            onButtonClick={() =>
+                                addToCart({
+                                    id: item.id,
+                                    image: item.image,
+                                    title: item.title,
+                                    price: item.price,
+                                })
+                            }
+                        />
                         ))}
                     </div>
+
                     <div className="btn-show-more">
-                        <Button text="Показать больше" onClick={() => console.log("Показать больше")} />
+                        <Button
+                            text="Вернуться на главную"
+                            onClick={() => navigate("/")}
+                        />
                     </div>
+
                 </div>
             </div>
         </Layout>

@@ -1,17 +1,13 @@
-import Layout from '../../layout';
-import MainPage from '../../pages/MainPage';
-import Catalog from '../../pages/CatalogPage';
-import './App.css'
+import { BrowserRouter } from 'react-router';
+import RouterApplication from '../../router';
+import './App.css';
 
 function App() {
 
   return (
-    <>
-      <Layout>
-        <MainPage />
-        <Catalog />
-      </Layout>
-    </>
+    <BrowserRouter>
+      <RouterApplication />
+    </BrowserRouter>
   )
 }
 

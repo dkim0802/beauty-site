@@ -27,6 +27,7 @@ export const products = [
 
 export const boxes = [
     {
+        id: 1,
         image: "https://res.cloudinary.com/dt0ceydok/image/upload/v1779990933/Vertue-Beauty-Box-kupit-Photoroom_zxgew5.webp",
         title: "Уходовая косметика\n«Glow your own way»",
         price: 15000,
