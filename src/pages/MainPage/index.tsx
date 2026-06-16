@@ -3,7 +3,7 @@ import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Layout from "../../layout";
 import { useNavigate } from "react-router";
-import { products, boxes } from "../../data/ProductCard";
+import { products, boxes } from "../../data/ProductCard.tsx";
 import { addToCart } from "../../utils/cart";
 import "./style.css";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import Card from "../../components/Card";
-import { products } from "../../data/ProductCard";
+import { products } from "../../data/ProductCard.tsx";
 import Button from "../../components/Button";
 import Layout from "../../layout";
 import { useNavigate } from "react-router";

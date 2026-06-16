@@ -33,4 +33,3 @@ export const boxes = [
         price: 15000,
     }, 
 ];
-
