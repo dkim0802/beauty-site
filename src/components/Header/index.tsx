@@ -1,25 +1,27 @@
-import React from "react";
+import React, {useState} from "react";
 import hero from "../../assets/header-photo.png";
 import Button from "../Button";
 import { Link, useNavigate } from "react-router";
 import { paths } from "../../router/routes";
+import BoxModal from "../BoxModal";
 import "./style.css";
 
 const Header: React.FC = () => {
-    const navigate = useNavigate();
+
+    const [isBoxModalOpen, setIsBoxModalOpen] = useState(false);
 
     const handleBoxesClick = () => {
         if (window.location.pathname === "/") {
             document.getElementById("boxes")?.scrollIntoView({behavior: "smooth",});
             return;
         }
-
         navigate("/");
-
         setTimeout(() => {
             document.getElementById("boxes")?.scrollIntoView({behavior: "smooth",});
         }, 150);
     };
+    const navigate = useNavigate();
+
 
     return (
         <header id="header" className="header">
@@ -47,9 +49,7 @@ const Header: React.FC = () => {
 
                     <Button
                         text="Заказать бокс"
-                        onClick={() =>
-                            handleBoxesClick()
-                        }
+                           onClick={() => setIsBoxModalOpen(true)}
                     />
                 </div>
 
@@ -57,6 +57,19 @@ const Header: React.FC = () => {
                     <img src={hero}alt="Header"/>
                 </div>
             </div>
+
+             {isBoxModalOpen && (
+                <BoxModal
+                    title="Pink Petal Glow"
+                    description="Твой идеальный ритуал любви к себе в одной коробочке. Мы собрали деликатные средства, которые подарят коже естественное сияние и свежесть весеннего сада."
+                    price={14000}
+                    onClose={() => setIsBoxModalOpen(false)}
+                    onAddToBasket={() => {
+                        console.log("Добавлено в корзину");
+                        setIsBoxModalOpen(false);
+                    }}
+                />
+            )}
         </header>
     );
 };

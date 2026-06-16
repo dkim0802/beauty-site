@@ -17,13 +17,15 @@ a {
     cursor: pointer;
     transition: 0.3s;
 }
-
 .header, .header-katalog {
+    width: 100%;       
+    display: block;
     background-color: #FFF7F9;
-    padding: 20px 40px;
+    padding: 20px;    
 }
 
 .container-header {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
@@ -75,22 +77,57 @@ a {
     color: #555;
 }
 
-/* .left button {
-    background-color: #FF7CA3;
-    color: white;
-    border: none;
-    padding: 15px 40px;
-    font-size: 18px;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.left button:hover {
-    background-color: #b2516e;
-} */
-
 .right img {
     width: 520px;
     max-width: 100%;
+}
+
+@media (max-width: 768px) {
+     .header, .header-katalog {
+        padding: 15px 10px;
+    }
+
+    .container-header {
+        flex-direction: column; 
+        gap: 15px;
+        text-align: center;
+    }
+
+    .nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .nav a {
+        margin: 0 10px;
+        font-size: 16px;
+    }
+
+    .content {
+        margin-top: 40px;
+        flex-direction: column-reverse;
+        padding: 0 20px;
+        text-align: center;
+    }
+
+    .left {
+        width: 100%;
+        margin-top: 30px;
+    }
+
+    .left h1 {
+        font-size: 32px; 
+    }
+
+    .left p {
+        font-size: 18px;
+    }
+
+    .right img {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
 }
