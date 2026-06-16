@@ -5,12 +5,10 @@
 }
 
 .cards, .cards-boxes {
-    width: 100%;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, calc(25% - 22.5px)); 
     gap: 30px;
-    margin-bottom: 70px;
-    justify-items: center; 
+    width: 100%;
 }
 
 .logo-main {
