@@ -5,6 +5,7 @@ export interface ProductItem {
     image: string;
     title: string;
     price: number;
+    description?: string; 
 }
 
 export type BoxItem = ProductItem;
@@ -98,7 +99,7 @@ const getRequestErrorMessage = (error: unknown): string => {
         return error.message;
     }
 
-    return "Не удалось загрузить данные каталога.";
+    return "Не удалось загрузить данные catalog.";
 };
 
 const fetchCatalogItems = async (
@@ -131,4 +132,16 @@ export const getProducts = (signal?: AbortSignal): Promise<ProductItem[]> => {
 
 export const getBoxes = (signal?: AbortSignal): Promise<BoxItem[]> => {
     return fetchCatalogItems(boxesEndpoint, signal);
+};
+
+export const getModalBox = async (signal?: AbortSignal): Promise<BoxItem | null> => {
+    try {
+        const allBoxes = await getBoxes(signal);
+        const foundBox = allBoxes.find(box => box.id === 0 || box.title === "Pink Petal Glow");
+        return foundBox || null;
+    } catch (error) {
+        if (axios.isCancel(error)) return null;
+        console.error("Ошибка при поиске эксклюзивного бокса:", error);
+        return null;
+    }
 };
