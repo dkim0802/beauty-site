@@ -4,12 +4,28 @@
     width: 100%;
 }
 
-.cards, .cards-boxes {
+.cards {
     display: grid;
-    grid-template-columns: repeat(4, calc(25% - 22.5px)); 
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 30px; 
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px; 
+    justify-content: center; 
+}
+
+.cards-boxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 30px;
     width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 70px;
+    padding: 40px 20px;
+    justify-content: center;
 }
+
 
 .logo-main {
     font-size: 36px;
@@ -25,12 +41,15 @@
     margin-bottom: 30px;
 }
 
-.cards-boxes {
-     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 30px;
-    margin-bottom: 70px;
+
+.catalog-status {
+    margin: 0 0 70px;
+    text-align: center;
+    color: #4b4b4b;
+}
+
+.catalog-status-error {
+    color: #c62828;
 }
 
 @media (max-width: 1024px) {

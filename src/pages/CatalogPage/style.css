@@ -61,6 +61,16 @@
     color: #fff;
 }
 
+.catalog-status {
+    margin: 0 0 70px;
+    text-align: center;
+    color: #4b4b4b;
+}
+
+.catalog-status-error {
+    color: #c62828;
+}
+
 @media (max-width: 1024px) {
     .cards {
         grid-template-columns: repeat(3, 1fr); 
