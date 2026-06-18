@@ -3,7 +3,7 @@ import Card from "../../components/Card";
 import Button from "../../components/Button";
 import Layout from "../../layout";
 import { useNavigate } from "react-router";
-import { addToCart } from "../../utils/cart";
+import { addToCart, removeFromCart } from "../../utils/cart";
 import { getProducts, type ProductItem } from "../../api/databaseApi.ts";
 import "./style.css";
 
@@ -12,6 +12,23 @@ const Catalog: React.FC = () => {
     const [products, setProducts] = useState<ProductItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    
+    const [cartQuantities, setCartQuantities] = useState<Record<number, number>>(() => {
+        try {
+            const savedCart = localStorage.getItem("cart");
+            if (!savedCart) return {};
+            
+            const parsedCart = JSON.parse(savedCart);
+            const quantities: Record<number, number> = {};
+            parsedCart.forEach((item: { id: number; count?: number }) => {
+                quantities[item.id] = item.count || 1;
+            });
+            return quantities;
+        } catch (error) {
+            console.error("Ошибка чтения корзины из localStorage:", error);
+            return {};
+        }
+    });
 
     useEffect(() => {
         const controller = new AbortController();
@@ -42,6 +59,30 @@ const Catalog: React.FC = () => {
         return () => controller.abort();
     }, []);
 
+    const handleIncrease = (item: ProductItem) => {
+        setCartQuantities((prev) => ({
+            ...prev,
+            [item.id]: (prev[item.id] || 0) + 1,
+        }));
+        addToCart(item);
+    };
+
+    const handleDecrease = (item: ProductItem) => {
+        setCartQuantities((prev) => {
+            const currentQty = prev[item.id] || 0;
+            if (currentQty <= 1) {
+                const updated = { ...prev };
+                delete updated[item.id];
+                return updated;
+            }
+            return {
+                ...prev,
+                [item.id]: currentQty - 1,
+            };
+        });
+        removeFromCart(item.id); 
+    };
+
     return (
         <Layout>
             <div className="catalog">
@@ -62,15 +103,38 @@ const Catalog: React.FC = () => {
 
                     {!isLoading && !errorMessage && products.length > 0 && (
                         <div className="cards">
-                            {products.map((item, index) => (
-                                <Card
-                                    key={`${item.id}-${index}`}
-                                    image={item.image}
-                                    title={item.title}
-                                    price={`${item.price} ₸`}
-                                    onButtonClick={() => addToCart(item)}
-                                />
-                            ))}
+                            {products.map((item, index) => {
+                                const quantity = cartQuantities[item.id] || 0;
+
+                                return (
+                                    <div key={`${item.id}-${index}`} className="card-wrapper">
+                                        <Card
+                                            image={item.image}
+                                            title={item.title}
+                                            price={`${item.price} ₸`}
+                                            onButtonClick={quantity === 0 ? () => handleIncrease(item) : () => {}}
+                                        />
+                                        
+                                        {quantity > 0 && (
+                                            <div className="quantity-controls">
+                                                <button 
+                                                    className="quantity-btn btn-minus" 
+                                                    onClick={() => handleDecrease(item)}
+                                                >
+                                                    -
+                                                </button>
+                                                <span className="quantity-value">{quantity}</span>
+                                                <button 
+                                                    className="quantity-btn btn-plus" 
+                                                    onClick={() => handleIncrease(item)}
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
 
