@@ -4,7 +4,7 @@ import Card from "../../components/Card";
 import Layout from "../../layout";
 import { useNavigate } from "react-router";
 import { getBoxes, getProducts, type BoxItem, type ProductItem } from "../../api/databaseApi";
-import { addToCart, removeFromCart } from "../../utils/cart"; 
+import { addToCart, removeFromCart, getCart, type CartProduct } from "../../utils/cart"; 
 import "./style.css";
 
 const MainPage: React.FC = () => {
@@ -14,23 +14,31 @@ const MainPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const [cartQuantities, setCartQuantities] = useState<Record<number, number>>(() => {
-        try {
-            const savedCart = localStorage.getItem("cart");
-            if (!savedCart) return {};
-            
-            const parsedCart = JSON.parse(savedCart);
-            const quantities: Record<number, number> = {};
-            parsedCart.forEach((item: { id: number; count?: number }) => {
-                quantities[item.id] = item.count || 1;
-            });
-            return quantities;
-        } catch (error) {
-            console.error("Ошибка чтения корзины из localStorage:", error);
-            return {};
-        }
-    });
+    // Универсальная функция синхронизации количеств
+    const syncQuantities = (): Record<number, number> => {
+        const currentCart = getCart();
+        const quantities: Record<number, number> = {};
+        currentCart.forEach((item) => {
+            // Приводим ID к числу на случай, если где-то записалась строка
+            const idAsNumber = Number(item.id);
+            if (!isNaN(idAsNumber)) {
+                quantities[idAsNumber] = item.quantity;
+            }
+        });
+        return quantities;
+    };
 
+    const [cartQuantities, setCartQuantities] = useState<Record<number, number>>(syncQuantities);
+
+    // Подписка на кастомное событие обновления корзины
+    useEffect(() => {
+        const handleCartUpdate = () => setCartQuantities(syncQuantities());
+        
+        window.addEventListener("cartUpdated", handleCartUpdate);
+        return () => window.removeEventListener("cartUpdated", handleCartUpdate);
+    }, []);
+
+    // Загрузка данных
     useEffect(() => {
         const controller = new AbortController();
 
@@ -47,14 +55,9 @@ const MainPage: React.FC = () => {
                 setProducts(loadedProducts);
                 setBoxes(loadedBoxes);
             } catch (error) {
-                if (controller.signal.aborted) {
-                    return;
-                }
-
+                if (controller.signal.aborted) return;
                 setErrorMessage(
-                    error instanceof Error
-                        ? error.message
-                        : "Не удалось загрузить каталог.",
+                    error instanceof Error ? error.message : "Не удалось загрузить каталог."
                 );
             } finally {
                 if (!controller.signal.aborted) {
@@ -64,38 +67,27 @@ const MainPage: React.FC = () => {
         };
 
         loadCatalog();
-
         return () => controller.abort();
     }, []);
 
+    // Безопасное добавление товара/бокса в корзину
     const handleIncrease = (item: ProductItem | BoxItem) => {
-        setCartQuantities((prev) => ({
-            ...prev,
-            [item.id]: (prev[item.id] || 0) + 1,
-        }));
-        addToCart(item);
+        const cartProduct: CartProduct = {
+            id: Number(item.id), // Гарантируем, что ID — число
+            title: 'title' in item ? item.title : (item as any).name || "Без названия",
+            image: 'image' in item ? item.image : (item as any).img || (item as any).photo || "",
+            price: 'price' in item ? item.price : Number((item as any).price || 0)
+        };
+        addToCart(cartProduct);
     };
 
+    // Безопасное уменьшение количества
     const handleDecrease = (item: ProductItem | BoxItem) => {
-        setCartQuantities((prev) => {
-            const currentQty = prev[item.id] || 0;
-            if (currentQty <= 1) {
-                const updated = { ...prev };
-                delete updated[item.id];
-                return updated;
-            }
-            return {
-                ...prev,
-                [item.id]: currentQty - 1,
-            };
-        });
-        removeFromCart(item.id);
+        removeFromCart(Number(item.id));
     };
 
-    const allBoxes =
-        boxes.length > 0
-            ? Array.from({ length: 4 }, (_, index) => boxes[index % boxes.length])
-            : [];
+    // Ограничиваем вывод боксов до 4 штук
+    const displayedBoxes = boxes.slice(0, 4);
 
     return (
         <Layout>
@@ -105,9 +97,7 @@ const MainPage: React.FC = () => {
                 {isLoading && <p className="catalog-status">Загрузка каталога...</p>}
 
                 {errorMessage && (
-                    <p className="catalog-status catalog-status-error">
-                        {errorMessage}
-                    </p>
+                    <p className="catalog-status catalog-status-error">{errorMessage}</p>
                 )}
 
                 {!isLoading && !errorMessage && products.length === 0 && (
@@ -116,16 +106,17 @@ const MainPage: React.FC = () => {
 
                 {!isLoading && !errorMessage && products.length > 0 && (
                     <div className="cards">
-                        {products.slice(0, 4).map((item, index) => {
-                            const quantity = cartQuantities[item.id] || 0;
+                        {products.slice(0, 4).map((item) => {
+                            const quantity = cartQuantities[Number(item.id)] || 0;
 
                             return (
-                                <div key={`${item.id}-${index}`} className="card-wrapper">
+                                <div key={`prod-${item.id}`} className="card-wrapper">
                                     <Card
                                         image={item.image}
                                         title={item.title}
                                         price={`${item.price} ₸`}
                                         onButtonClick={quantity === 0 ? () => handleIncrease(item) : () => {}}
+
                                     />
                                     
                                     {quantity > 0 && (
@@ -158,25 +149,23 @@ const MainPage: React.FC = () => {
                     />
                 </div>
 
-                <h1 className="logo-main" id="boxes">
-                    Боксы
-                </h1>
+                <h1 className="logo-main" id="boxes">Боксы</h1>
 
                 {!isLoading && !errorMessage && boxes.length === 0 && (
                     <p className="catalog-status">Боксы не найдены.</p>
                 )}
 
-                {!isLoading && !errorMessage && allBoxes.length > 0 && (
+                {!isLoading && !errorMessage && displayedBoxes.length > 0 && (
                     <div className="cards-boxes">
-                        {allBoxes.map((item, index) => {
-                            const quantity = cartQuantities[item.id] || 0;
+                        {displayedBoxes.map((item) => {
+                            const quantity = cartQuantities[Number(item.id)] || 0;
 
                             return (
-                                <div key={`${item.title}-${index}`} className="card-wrapper">
+                                <div key={`box-${item.id}`} className="card-wrapper">
                                     <Card
-                                        image={item.image}
-                                        title={item.title}
-                                        price={`${item.price} ₸`}
+                                        image={'image' in item ? item.image : (item as any).img || (item as any).photo || ""}
+                                        title={'title' in item ? item.title : (item as any).name || "Без названия"}
+                                        price={`${'price' in item ? item.price : Number((item as any).price || 0)} ₸`}
                                         onButtonClick={quantity === 0 ? () => handleIncrease(item) : () => {}}
                                     />
                                     

@@ -1,5 +1,5 @@
 export interface CartProduct {
-    id: number;
+    id: string | number; // Разрешаем строку для хранения 'prod-1' и 'box-1'
     title: string;
     image: string;
     price: number;
@@ -14,12 +14,13 @@ const isRecord = (value: unknown): value is Record<string, unknown> => {
 };
 
 const isCartItem = (value: unknown): value is CartItem => {
-    if(!isRecord(value)) {
+    if (!isRecord(value)) {
         return false;
     }
 
     return (
-        typeof value.id === "number" &&
+        // Изменено: валидатор теперь официально пропускает и строки, и числа
+        (typeof value.id === "number" || typeof value.id === "string") &&
         typeof value.image === "string" &&
         typeof value.title === "string" &&
         typeof value.price === "number" &&
@@ -34,7 +35,8 @@ export const getCart = (): CartItem[] => {
     } catch {
         return [];
     }
-}
+};
+
 export const saveCart = (cart: CartItem[]) => {
     localStorage.setItem("cart", JSON.stringify(cart));
     window.dispatchEvent(new Event("cartUpdated"));
@@ -43,7 +45,8 @@ export const saveCart = (cart: CartItem[]) => {
 export const addToCart = (product: CartProduct) => {
     const cart = getCart();
 
-    const existing = cart.find((item) => item.id === product.id);
+    // Сравниваем ID строго как строки, чтобы "prod-1" и "box-1" не склеивались
+    const existing = cart.find((item) => String(item.id) === String(product.id));
 
     if (existing) {
         existing.quantity += 1;
@@ -54,30 +57,28 @@ export const addToCart = (product: CartProduct) => {
     saveCart(cart);
 };
 
-export const removeFromCart = (id: number) => {
-    const cart = getCart().filter((item) => item.id !== id);
+export const removeFromCart = (id: number | string) => {
+    const cart = getCart().filter((item) => String(item.id) !== String(id));
     saveCart(cart);
 };
 
-export const increaseQty = (id: number) => {
+export const increaseQty = (id: number | string) => {
     const cart = getCart().map((item) =>
-        item.id === id
+        String(item.id) === String(id)
             ? { ...item, quantity: item.quantity + 1 }
-            : item,
+            : item
     );
-
     saveCart(cart);
 };
 
-export const decreaseQty = (id: number) => {
+export const decreaseQty = (id: number | string) => {
     const cart = getCart()
         .map((item) =>
-            item.id === id
+            String(item.id) === String(id)
                 ? { ...item, quantity: item.quantity - 1 }
                 : item
         )
         .filter((item) => item.quantity > 0);
-
     saveCart(cart);
 };
 
